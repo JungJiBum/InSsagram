@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "23451849859",
+    "firebase_url": "https://inssagram-29235.firebaseio.com",
+    "project_id": "inssagram-29235",
+    "storage_bucket": "inssagram-29235.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23451849859:android:6bf981b16d08024d",
+        "android_client_info": {
+          "package_name": "com.example.jibum.inssagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23451849859-2macei09avr97h09p4upiaeit63dghlc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jibum.inssagram",
+            "certificate_hash": "a8a3a8a74fa9d0e049550f7a86b82894bbb479c8"
+          }
+        },
+        {
+          "client_id": "23451849859-tgtpj0n1v70oggvp7cf4kgbd1a67oujl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm_pX1CNf28ayxSMY0615vr44LPm5V6Uk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23451849859-tgtpj0n1v70oggvp7cf4kgbd1a67oujl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
