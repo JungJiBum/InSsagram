@@ -55,6 +55,7 @@ fun contentUpload() {
     val storageRef = storage?.reference?.child("images")?.child(imageFileName)
 
     storageRef.putFile(photoUri!!)
+    //에러체크
 }
 
 
