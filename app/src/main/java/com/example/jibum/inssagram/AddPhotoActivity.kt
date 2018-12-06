@@ -1,6 +1,7 @@
 package com.example.jibum.inssagram
 
 import android.app.Activity
+
 import android.app.Instrumentation
 import android.content.Intent
 import android.net.Uri
@@ -11,7 +12,6 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import java.text.SimpleDateFormat
 import java.util.*
-
 class AddPhotoActivity : AppCompatActivity() {
     val PICK_IMAGE_FROM_ALBUM = 0
     var storage : FirebaseStorage? = null
@@ -31,7 +31,9 @@ class AddPhotoActivity : AppCompatActivity() {
             var photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
             startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
-
+        }
+        addphoto_upload.setOnClickListener {
+            contentUpload()
         }
     }
 
@@ -46,6 +48,16 @@ class AddPhotoActivity : AppCompatActivity() {
         } else {
             finish()
         }
+    }
+    fun contentUpload(){
+
+        val timeStamp =SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_"+timeStamp +"_.png"
+        val storageRef = storage?.reference?.child("images")?.child(imageFileName)
+        storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
+            Toast.makeText(this,getString(R.string.upload_success),Toast.LENGTH_LONG).show()
+        }
+
     }
 }
 
