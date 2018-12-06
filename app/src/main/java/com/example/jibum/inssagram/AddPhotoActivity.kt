@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import java.text.SimpleDateFormat
@@ -48,14 +49,6 @@ class AddPhotoActivity : AppCompatActivity() {
     }
 }
 
-fun contentUpload() {
 
-    val timeStamp = SimpleDateFormat("yyyyMMdd__HHmmss").format(Date())
-    val imageFileName = "JPEG_" + timeStamp + "_.png"
-    val storageRef = storage?.reference?.child("images")?.child(imageFileName)
-
-    storageRef.putFile(photoUri!!)
-    //에러체크
-}
 
 
