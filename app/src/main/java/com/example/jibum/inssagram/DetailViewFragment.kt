@@ -89,8 +89,7 @@ class DetailViewFragment : Fragment() {
             //설명 텍스트
             viewHodler.detailviewitem_explain_textview.text = contentDTOs!![position].explain
             //좋아요 카운터 설정
-            viewHodler.detailviewitem_favoritecounter_textview.text = "좋아요 " +
-                    contentDTOs!![position].favoriteCount.toString() + "개"
+            viewHodler.detailviewitem_favoritecounter_textview.text = "좋아요 " +contentDTOs!![position].favoriteCount.toString() + "개"
             var uid = FirebaseAuth.getInstance().currentUser!!.uid
             viewHodler.detailviewitem_favorite_imageview.setOnClickListener {
                 favoriteEvent(position)
@@ -103,6 +102,16 @@ class DetailViewFragment : Fragment() {
             } else {
                 viewHodler.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
             }
+
+            viewHodler.detailviewitem_profile_image.setOnClickListener {
+
+                var fragment : UserFragment()
+                var bundle = Bundle()
+                bundle.putString("destinationUid",contentDTOs[position].uid)
+                fragment.arguments = bundle
+                activity!!.supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).commit()
+            }
+
         }
 
         private fun favoriteEvent(position: Int) {
