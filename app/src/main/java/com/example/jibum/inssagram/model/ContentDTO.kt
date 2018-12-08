@@ -8,8 +8,8 @@ data class ContentDTO(
     var uid: String? = null,
     var userID: String? = null,
     var timestamp: Long? = null,
-    var favoriteCOunt: Int = 0,
-    var favorites: Map<String, Boolean> = HashMap()
+    var favoriteCount: Int = 0,
+    var favorites: MutableMap<String, Boolean> = HashMap()
 ) {
     data class Coment(
         var uid: String? = null,

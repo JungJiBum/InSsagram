@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.jibum.inssagram.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Transaction
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 
@@ -43,7 +44,8 @@ class DetailViewFragment : Fragment() {
             var uid = FirebaseAuth.getInstance().currentUser?.uid
 
 
-            firestore?.collection("images")?.orderBy("timestamp")?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+            firestore?.collection("images")?.orderBy("timestamp")
+                ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     contentDTOs.clear()
                     contentUidList.clear()
 
@@ -68,7 +70,7 @@ class DetailViewFragment : Fragment() {
 
         }
 
-        inner class CustomViewHolder(view: View?) : RecyclerView.ViewHolder(view)
+        private inner class CustomViewHolder(view: View?) : RecyclerView.ViewHolder(view)
 
         override fun getItemCount(): Int {
             return contentDTOs.size
@@ -88,9 +90,45 @@ class DetailViewFragment : Fragment() {
             viewHodler.detailviewitem_explain_textview.text = contentDTOs!![position].explain
             //좋아요 카운터 설정
             viewHodler.detailviewitem_favoritecounter_textview.text = "좋아요 " +
-                    contentDTOs!![position].favoriteCOunt.toString() + "개"
+                    contentDTOs!![position].favoriteCount.toString() + "개"
+            var uid = FirebaseAuth.getInstance().currentUser!!.uid
+            viewHodler.detailviewitem_favorite_imageview.setOnClickListener {
+                favoriteEvent(position)
+            }
 
+            //좋아요 클릭시
+            if (contentDTOs!![position].favorites.containsKey(uid)) {
+                viewHodler.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite)
+                //클릭하지않았을경우
+            } else {
+                viewHodler.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
+            }
+        }
+
+        private fun favoriteEvent(position: Int) {
+            var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
+            firestore?.runTransaction { transaction ->
+                var uid = FirebaseAuth.getInstance().currentUser!!.uid
+                var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
+
+                if (contentDTO!!.favorites.containsKey(uid)) {
+                    //좋아요를 누른상태
+                    contentDTO?.favoriteCount = contentDTO?.favoriteCount - 1
+                    contentDTO?.favorites.remove(uid)
+
+
+                } else {
+                    //좋아요를 누르지않은상태
+                    contentDTO?.favorites[uid] = true
+                    contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
+
+
+                }
+                transaction.set(tsDoc,contentDTO)
+
+            }
 
         }
     }
+
 }
