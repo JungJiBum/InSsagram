@@ -46,10 +46,9 @@ class DetailViewFragment : Fragment() {
 
             firestore?.collection("images")?.orderBy("timestamp")
                 ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    if (querySnapshot == null) return@addSnapshotListener
                     contentDTOs.clear()
                     contentUidList.clear()
-
-
                     for (snapshot in querySnapshot!!.documents) {
                         var item = snapshot.toObject(ContentDTO::class.java)
                         contentDTOs.add(item)
@@ -89,7 +88,8 @@ class DetailViewFragment : Fragment() {
             //설명 텍스트
             viewHodler.detailviewitem_explain_textview.text = contentDTOs!![position].explain
             //좋아요 카운터 설정
-            viewHodler.detailviewitem_favoritecounter_textview.text = "좋아요 " +contentDTOs!![position].favoriteCount.toString() + "개"
+            viewHodler.detailviewitem_favoritecounter_textview.text = "좋아요 " +
+                    contentDTOs!![position].favoriteCount.toString() + "개"
             var uid = FirebaseAuth.getInstance().currentUser!!.uid
             viewHodler.detailviewitem_favorite_imageview.setOnClickListener {
                 favoriteEvent(position)
@@ -135,7 +135,7 @@ class DetailViewFragment : Fragment() {
 
 
                 }
-                transaction.set(tsDoc,contentDTO)
+                transaction.set(tsDoc, contentDTO)
 
             }
 

@@ -11,6 +11,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.MenuItem
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        setToolbarDefault()
         when (item.itemId) {
             R.id.action_home -> {
                 var detailViewFragment = DetailViewFragment()
@@ -51,7 +53,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return true
             }
             R.id.action_account -> {
+                var uid = FirebaseAuth.getInstance().currentUser?.uid
                 var userFragment = UserFragment()
+                var bundle = Bundle()
+                bundle.putString("destinationUid",uid)
+                userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment).commit()
 
                 return true
@@ -71,6 +77,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         //사진을 받아오는 코드
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+    }
+    fun setToolbarDefault(){
+        toolbar_btn_back.visibility = View.GONE
+        toolbar_username.visibility = View.GONE
+        toolbar_title_image.visibility = View.VISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
