@@ -105,11 +105,13 @@ class DetailViewFragment : Fragment() {
 
             viewHodler.detailviewitem_profile_image.setOnClickListener {
 
-                var fragment : UserFragment()
+                var fragment = UserFragment()
                 var bundle = Bundle()
-                bundle.putString("destinationUid",contentDTOs[position].uid)
+                bundle.putString("destinationUid", contentDTOs[position].uid)
+                bundle.putString("userId", contentDTOs[position].userID)
                 fragment.arguments = bundle
-                activity!!.supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).commit()
+                activity!!.supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit()
+
             }
 
         }

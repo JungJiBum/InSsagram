@@ -33,18 +33,14 @@ class UserFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        firestore = FirebaseFirestore.getInstance()
+        fragmentView = inflater.inflate(R.layout.fragment_user, container, false)
 
         if (arguments != null) {
 
             uid = arguments!!.getString("destinationUid")
 
         }
-
-
-
-
-        firestore = FirebaseFirestore.getInstance()
-        fragmentView = inflater.inflate(R.layout.fragment_user, container, false)
         fragmentView?.account_iv_profile?.setOnClickListener {
             var photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"

@@ -130,7 +130,7 @@ class LoginActivity : AppCompatActivity() {
 
         var signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent, GOOGLE_LOGIN_CODE)
-        moveMainPage(auth?.currentUser)
+
 
 
     }
@@ -177,11 +177,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 //            페이스북 로그인 확인창 넘어가기위해사용
-        override fun onResume() {
-            super.onResume()
-            moveMainPage(auth?.currentUser)
-
-        }
+//        override fun onResume() {
+//            super.onResume()
+//            moveMainPage(auth?.currentUser)
+//
+//        }
 
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
