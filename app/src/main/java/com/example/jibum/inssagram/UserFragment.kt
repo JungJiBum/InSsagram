@@ -1,8 +1,10 @@
 package com.example.jibum.inssagram
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutCompat
 import android.support.v7.widget.RecyclerView
@@ -46,8 +48,8 @@ class UserFragment : Fragment() {
             uid = arguments!!.getString("destinationUid")
             if (uid != null && uid == currentUserUid) {
                 //나의 유저페이지
-                fragmentView?.account_btn_follodw_signout?.text = getString(R.string.signout)
-                fragmentView?.account_btn_follodw_signout?.setOnClickListener {
+                fragmentView?.account_btn_follow_signout?.text = getString(R.string.signout)
+                fragmentView?.account_btn_follow_signout?.setOnClickListener {
                     activity?.finish()
                     startActivity(Intent(activity,LoginActivity::class.java))
                     auth?.signOut()
@@ -56,7 +58,7 @@ class UserFragment : Fragment() {
 
             } else {
                 //제3자의 유저페이지
-                fragmentView?.account_btn_follodw_signout?.text= getString(R.string.follow)
+                fragmentView?.account_btn_follow_signout?.text= getString(R.string.follow)
 
                 var mainActivity = (activity as MainActivity)
                 mainActivity.toolbar_title_image.visibility = View.GONE
@@ -67,7 +69,7 @@ class UserFragment : Fragment() {
 
                     mainActivity.bottom_navigation.selectedItemId = R.id.action_home
                 }
-                fragmentView?.account_btn_follodw_signout?.setOnClickListener {
+                fragmentView?.account_btn_follow_signout?.setOnClickListener {
                     requestFollow()
                 }
 
@@ -183,6 +185,20 @@ class UserFragment : Fragment() {
             if (documentSnapshot == null)return@addSnapshotListener
             var followDTO = documentSnapshot.toObject(FollowDTO::class.java)
             fragmentView?.account_tv_follower_count?.text = followDTO?.followerCount.toString()
+            if (followDTO?.followers?.containsKey(currentUserUid)!!) {
+
+                fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow_cancel)
+                fragmentView?.account_btn_follow_signout
+                    ?.background
+                    ?.setColorFilter(ContextCompat.getColor(activity!!, R.color.colorLightGray), PorterDuff.Mode.MULTIPLY)
+            } else {
+
+                if (uid != currentUserUid) {
+
+                    fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
+                    fragmentView?.account_btn_follow_signout?.background?.colorFilter = null
+                }
+            }
 
         }
     }
