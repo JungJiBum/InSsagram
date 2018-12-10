@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.jibum.inssagram.model.AlarmDTO
 import com.example.jibum.inssagram.model.ContentDTO
+import com.example.jibum.inssagram.model.FollowDTO
 import com.facebook.share.model.AppInviteContent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,7 +23,7 @@ import java.util.zip.DeflaterInputStream
 
 class DetailViewFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
-    var user : FirebaseAuth? = null
+    var user: FirebaseAuth? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -49,7 +50,18 @@ class DetailViewFragment : Fragment() {
             //현재 로그인된 유저의 UID
             var uid = FirebaseAuth.getInstance().currentUser?.uid
 
+            firestore?.collection("users")?.document(uid!!)?.get()?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    var userDTO = task.result.toObject(FollowDTO::class.java)
+                    if (userDTO != null) {
+                        getContents(userDTO.followings)
+                    }
+                }
+            }
 
+        }
+
+        fun getContents(followers: MutableMap<String, Boolean>) {
             firestore?.collection("images")?.orderBy("timestamp")
                 ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (querySnapshot == null) return@addSnapshotListener
@@ -57,7 +69,8 @@ class DetailViewFragment : Fragment() {
                     contentUidList.clear()
                     for (snapshot in querySnapshot!!.documents) {
                         var item = snapshot.toObject(ContentDTO::class.java)
-                        contentDTOs.add(item)
+                        if (followers.keys.contains(item.uid))
+                            contentDTOs.add(item)
                         contentUidList.add(snapshot.id)
 
                     }
@@ -119,10 +132,10 @@ class DetailViewFragment : Fragment() {
                 activity!!.supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit()
 
             }
-            viewHodler.detailviewitem_comment_imageview.setOnClickListener {v ->
-                var intent = Intent(v.context,CommentActivity::class.java)
-                intent.putExtra("contentUid",contentUidList[position])
-                intent.putExtra("destinationUid",contentDTOs[position].uid)
+            viewHodler.detailviewitem_comment_imageview.setOnClickListener { v ->
+                var intent = Intent(v.context, CommentActivity::class.java)
+                intent.putExtra("contentUid", contentUidList[position])
+                intent.putExtra("destinationUid", contentDTOs[position].uid)
                 startActivity(intent)
 
             }
@@ -151,10 +164,11 @@ class DetailViewFragment : Fragment() {
                 }
                 transaction.set(tsDoc, contentDTO)
 
-             }
+            }
 
         }
-        fun favoriteAlarm(destinationUid:String){
+
+        fun favoriteAlarm(destinationUid: String) {
             var alarmDTO = AlarmDTO()
             alarmDTO.destinationUid = destinationUid
             alarmDTO.userId = user?.currentUser?.email
