@@ -10,19 +10,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.jibum.inssagram.model.AlarmDTO
 import com.example.jibum.inssagram.model.ContentDTO
+import com.facebook.share.model.AppInviteContent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
+import java.util.zip.DeflaterInputStream
 
 class DetailViewFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
+    var user : FirebaseAuth? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         firestore = FirebaseFirestore.getInstance()
+        user = FirebaseAuth.getInstance()
 
         var view = LayoutInflater.from(inflater.context).inflate(R.layout.fragment_detail, container, false)
         view.detailviewfragment_recyclerview.adapter = DetailRecyclervierwAdapter()
@@ -130,15 +135,16 @@ class DetailViewFragment : Fragment() {
                 var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
 
                 if (contentDTO!!.favorites.containsKey(uid)) {
-                    //좋아요를 누른상태
+                    //좋아요를 누른상태 -> 누르지 않는 상태
                     contentDTO?.favoriteCount = contentDTO?.favoriteCount - 1
                     contentDTO?.favorites.remove(uid)
 
 
                 } else {
-                    //좋아요를 누르지않은상태
+                    //좋아요를 누르지않은상태 -> 누른상태
                     contentDTO?.favorites[uid] = true
                     contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
+                    favoriteAlarm(contentDTOs[position].uid!!)
 
 
                 }
@@ -146,6 +152,16 @@ class DetailViewFragment : Fragment() {
 
             }
 
+        }
+        fun favoriteAlarm(destinationUid:String){
+            var alarmDTO = AlarmDTO()
+            alarmDTO.destinationUid = destinationUid
+            alarmDTO.userId = user?.currentUser?.email
+            alarmDTO.uid = user?.currentUser?.uid
+            alarmDTO.kind = 0
+            alarmDTO.timestamp = System.currentTimeMillis()
+
+            FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
         }
     }
 

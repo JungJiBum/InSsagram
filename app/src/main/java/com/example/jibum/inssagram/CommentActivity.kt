@@ -13,16 +13,17 @@ import com.example.jibum.inssagram.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_comment.*
+import kotlinx.android.synthetic.main.item_comment.view.*
 
 class CommentActivity : AppCompatActivity() {
 
-    var contentUid : String? = null
+    var contentUid: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comment)
+        contentUid = intent.getStringExtra("contentUid")
         comment_recyclerview.adapter = CommentRecyclerViewAdapter()
         comment_recyclerview.layoutManager = LinearLayoutManager(this)
-        contentUid = intent.getStringExtra("contentUid")
         comment_btn_send.setOnClickListener {
             var comment = ContentDTO.Comment()
             comment.userId = FirebaseAuth.getInstance().currentUser!!.email
@@ -31,23 +32,52 @@ class CommentActivity : AppCompatActivity() {
             comment.timestamp = System.currentTimeMillis()
 
             FirebaseFirestore.getInstance().collection("images").document(contentUid!!).collection("comments").document().set(comment)
+            comment_edit_message.setTag("")
 
         }
     }
-    inner class CommentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+
+    inner class CommentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        val comments: ArrayList<ContentDTO.Comment>
+
+        init {
+            comments = ArrayList()
+
+            FirebaseFirestore.getInstance().collection("images").document(contentUid!!).collection("comments")
+                .orderBy("timestamp").addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                comments.clear()
+                if (querySnapshot == null) return@addSnapshotListener
+
+                for (snapshot in querySnapshot.documents!!) {
+                    comments.add(snapshot.toObject(ContentDTO.Comment::class.java))
+
+                }
+                notifyDataSetChanged()
+
+            }
+
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-            var view = LayoutInflater.from(parent?.context).inflate(R.layout.item_comment,parent,false)
+            var view = LayoutInflater.from(parent?.context).inflate(R.layout.item_comment, parent, false)
             return CustomViewHolder(view)
         }
-        inner class CustomViewHolder(view: View?) : RecyclerView.ViewHolder(view)
+
+        private inner class CustomViewHolder(view: View?) : RecyclerView.ViewHolder(view)
 
         override fun getItemCount(): Int {
-            return 3
+            return comments.size
 
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+            var view = holder!!.itemView
+            view.commentviewitem_textview_comment.text = comments[position].comment
+            view.commentviewitem_textview_profile.text = comments[position].userId
+
+
         }
 
     }
