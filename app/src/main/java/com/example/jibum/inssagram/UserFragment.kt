@@ -14,6 +14,7 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.RequestOptions
+import com.example.jibum.inssagram.model.AlarmDTO
 import com.example.jibum.inssagram.model.ContentDTO
 import com.example.jibum.inssagram.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -142,6 +143,7 @@ class UserFragment : Fragment() {
 
                 followDTO.followerCount = followDTO.followerCount + 1
                 followDTO.followers[currentUserUid!!] = true
+                followerAlarm(uid)
             }
             transaction.set(tsDocFollower, followDTO)
             return@runTransaction
@@ -162,6 +164,17 @@ class UserFragment : Fragment() {
                 }
             }
 
+    }
+
+    fun followerAlarm(destinationUid: String?){
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = auth?.currentUser!!.email
+        alarmDTO.uid = auth?.currentUser!!.uid
+        alarmDTO.kind = 2
+        alarmDTO.timestamp =System.currentTimeMillis()
+
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
     }
 
     fun getFollower(){
