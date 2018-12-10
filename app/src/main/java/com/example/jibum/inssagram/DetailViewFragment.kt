@@ -1,5 +1,6 @@
 package com.example.jibum.inssagram
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutCompat
@@ -111,6 +112,12 @@ class DetailViewFragment : Fragment() {
                 bundle.putString("userId", contentDTOs[position].userID)
                 fragment.arguments = bundle
                 activity!!.supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit()
+
+            }
+            viewHodler.detailviewitem_comment_imageview.setOnClickListener {v ->
+                var intent = Intent(v.context,CommentActivity::class.java)
+                intent.putExtra("contentUid",contentUidList[position])
+                startActivity(intent)
 
             }
 
